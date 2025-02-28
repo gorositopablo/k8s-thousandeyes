@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: thousandeyes-sync-metrics
+  namespace: ops
+  labels:
+    app: thousandeyes-sync
+spec:
+  selector:
+    app: thousandeyes-sync
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP

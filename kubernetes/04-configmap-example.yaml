@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: thousandeyes-api-tests
+  namespace: ops
+  labels:
+    app: thousandeyes-tests
+data:
+  config.yaml: |
+    dryRun: false  # Set to false to apply real changes
+    httpTests:
+      - testName: "The name of your test here"
+        url: "https://httpbin.demo.aws.flanksource.com/status/200"
+        description: "Playbook or any other useful data here"
+        interval: 600
+        alertsEnabled: true
+        enabled: false
+        verifyCertificate: true
+        # Cloud Agents are not supported for bandwidth measurements, only Enterprise Agents will perform bandwidth measurements
+        bandwidthMeasurements: false
+        mtuMeasurements: false
+        httpTargetTime: 1000
+        httpTimeLimit: 10
+        # Put here a list of agent you want to use
+        agents:
+          - "32"
+        # Put here a list of alertRules you want to link this test to
+        alertRules:
+          - "1111111"
+          - "2222222"
+        # custom headers section  
+        headers:
+          - "My-custom-header: somevaluehere"

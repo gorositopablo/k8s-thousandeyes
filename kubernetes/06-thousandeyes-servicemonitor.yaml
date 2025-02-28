@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: thousandeyes-sync
+  labels:
+    release: prometheus  # Adjust to match your Prometheus instance
+spec:
+  selector:
+    matchLabels:
+      app: thousandeyes-sync
+  endpoints:
+    - port: "8000"
+      interval: 30s
+      path: "/metrics"
