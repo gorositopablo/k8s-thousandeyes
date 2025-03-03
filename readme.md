@@ -4,26 +4,26 @@ A service to manage ThousandEyes HTTP test from Kubernetes using configMaps and 
 ## Motivation
 In my use case of building a platform, I need to create HTTP test automatically when a new API or service gets deployed, without any manual intervention or effort.
 
-Cisco ThousandsEyes have an IaC [provider to use for Terraform](https://registry.terraform.io/providers/thousandeyes/thousandeyes/latest) , but if you would prefer to implement some kind of GitOps approch for ThousandEyes there are not many options available.
+Cisco ThousandsEyes have an IaC [provider to use for Terraform](https://registry.terraform.io/providers/thousandeyes/thousandeyes/latest) , but if you would prefer to implement some kind of GitOps approach for ThousandEyes there are not many options available.
 
-- There is Kubernetes Operator project but it seems deprecated. [See here](https://github.com/CiscoDevNet/thousandeyes-kubernetes-operator)
+- There is a Kubernetes Operator project but it seems deprecated. [See here](https://github.com/CiscoDevNet/thousandeyes-kubernetes-operator)
 - Crossplane providers would be a good option but there isn't a provider for it.
 - Crossplane Upjet (a project to "convert" Terraform providers into Crossplane providers) could be another option. But it seems a little bit complex. [My attempt here](https://github.com/gorositopablo/provider-thousandeyes). 
 - Another option is to use some sort of Terraform inline within Crossplane, but getting Frankenstein thoughts. 
 
 
  ## Solution
- This IS NOT an universal answer. But it is indeed a good solution for my problem.
- > Create HTTP test in ThousandEyes automatically without even think on them.
+ This IS NOT a universal answer. But it is indeed a good solution to my problem.
+ > Create HTTP tests in ThousandEyes automatically without even thinking about them.
 
-Create a service that perform API operations using the ThousandEyes API to create or update the HTTP Test on the fly. 
-This should be able to use in a GitOps approach.
+Create a service that performs API operations using the ThousandEyes API to create or update the HTTP Test on the fly. 
+This should be able to be used in a GitOps approach.
 
 ### How it works
-- You define a `configMap` with the httptest definition. In my use case, these configMaps gets created automatically from a Helm deployment, so all you need is to add a new `configMap` template in your Helm Chart.
+- You define a `configMap` with the httptest definition. In my use case, these configMaps get created automatically from a Helm deployment, so all you need is to add a new `configMap` template in your Helm Chart.
 - The service reads all the configmaps that have the label `app: thousandeyes-tests`
-- It will check by the URL to check field if the test already exist or not  (https://developer.cisco.com/docs/thousandeyes/list-http-server-tests/)
-- If it doesn't exist already, creates the http test using the parameters defined in the configmap (https://developer.cisco.com/docs/thousandeyes/create-http-server-test/)
+- It will check by the URL to check field if the test already exists or not  (https://developer.cisco.com/docs/thousandeyes/list-http-server-tests/)
+- If it doesn't exist already, create the http test using the parameters defined in the configmap (https://developer.cisco.com/docs/thousandeyes/create-http-server-test/)
 - If it does indeed already exist, it will try to update according to whatever content you fill in the configmap  (https://developer.cisco.com/docs/thousandeyes/update-http-server-test/)
 - Once deployed, the pod will watch for any configmaps changes to create or update the HTTP test.
 
@@ -40,10 +40,10 @@ Python app ->>ThousandEyes: Update the HTTP test
 ```
 
 ## How to use it
-1- Create a bearer Token in ThousandEyes to use.
-2- Add that secret in Kubernetes. Use your preferred method.
-3- Deploy all the needed configmaps you may need to create or managed your HTTP tests. 
-4- Deploy this service on your cluster using your preferred way. There are files within this repo on the `/kubernetes` folder as example.
+1. Create a bearer Token in ThousandEyes to use.
+2. Add that secret in Kubernetes. Use your preferred method.
+3. Deploy all the needed configmaps you may need to create or manage your HTTP tests. 
+4. Deploy this service on your cluster using your preferred way. There are files within this repo in the `/kubernetes` folder as an example.
 
 ### Config definition
 
